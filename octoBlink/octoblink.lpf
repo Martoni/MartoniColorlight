@@ -1,0 +1,19 @@
+LOCATE COMP "clk_i" SITE "P6";
+IOBUF PORT "clk_i" IO_TYPE=LVCMOS33;
+FREQUENCY PORT "clk_i" 25 MHZ;
+
+#LOCATE COMP "led_o[7]" SITE "P11";
+LOCATE COMP "led_o[6]" SITE "P11";
+
+
+LOCATE COMP "led_o[0]" SITE "F3"; 
+LOCATE COMP "led_o[1]" SITE "F1";
+LOCATE COMP "led_o[2]" SITE "G3";
+LOCATE COMP "led_o[3]" SITE "G2";
+LOCATE COMP "led_o[4]" SITE "H3";
+LOCATE COMP "led_o[5]" SITE "H5";
+LOCATE COMP "led_o[6]" SITE "F15";
+LOCATE COMP "led_o[7]" SITE "L2";
+
+IOBUF PORT "led_o" IO_TYPE=LVCMOS25;
+
