@@ -7,7 +7,7 @@ module SimpleServo #(
     input rst_i,
     input en_i,
     input [N-1:0] position_i,
-    output reg srv_o
+    output srv_o
 );
 
 `define MS 1_000_000
