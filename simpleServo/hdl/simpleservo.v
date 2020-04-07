@@ -1,3 +1,5 @@
+`timescale 1ps/1ps
+
 module SimpleServo #(
     parameter CLK_PER_NS = 40,
     parameter N = 8
@@ -36,8 +38,11 @@ begin
                 mscounter <= 0;
                 ms_pulse <= 1'b1;
             end
-            else
+            else 
+            begin
                 mscounter <= mscounter + 1'b1;
+            end
+                
         end
 end
 
@@ -48,12 +53,16 @@ begin
     if(rst_i)
         counter18ms = 0;
     else if(state_reg == s_low18ms)
-    begin
-    end
+        begin
+            if(ms_pulse)
+                counter18ms <= counter18ms + 1'b1;
+        end
+    else
+        counter18ms <= 0;
 end
 
 /* pulse period counter */
-`define PULSE_COUNTER_SIZE ($clog2(1 + (`MS/CLK_PER_NS)))
+`define PULSE_COUNTER_SIZE ($clog2(1 + ((`MS/CLK_PER_NS)/2**N)))
 reg [`PULSE_COUNTER_SIZE-1:0] pulsecounter;
 reg [N-1: 0] pulsecount;
 always @(posedge clk_i, posedge rst_i)
@@ -66,7 +75,7 @@ begin
     else
         if (state_reg == s_pulseon || state_reg == s_pulseoff)
            begin
-               if(pulsecounter >= `MS/CLK_PER_NS)
+               if(pulsecounter >= ((`MS/CLK_PER_NS)/2**N))
                begin
                    pulsecounter <= 0;
                    pulsecount <= pulsecount + 1;
@@ -80,6 +89,9 @@ begin
             pulsecount <= 0;
         end
 end
+
+
+
 
 /*****************/
 /* State machine */
@@ -121,7 +133,7 @@ begin
         s_low18ms :
             if(!en_i)
                 state_next <= s_init;
-            else if(pulsecount >= 20 - 2)
+            else if(counter18ms >= 20 - 3)
                 state_next <= s_init;
         default:
             state_next <= s_init;
@@ -139,8 +151,18 @@ assign srv_o = en_i && ((state_reg == s_pulse1ms) || (state_reg == s_pulseon));
 /* Formal  */
 /***********/
 
+always @(posedge clk_i)
+    if(!en_i)
+        assert(srv_o == 1'b0);
 
- 
 `endif //FORMAL
+
+`ifdef COCOTB_SIM
+initial begin
+  $dumpfile ("SimpleServo.vcd");
+  $dumpvars (0, SimpleServo);
+  #1;
+end
+`endif
 
 endmodule
