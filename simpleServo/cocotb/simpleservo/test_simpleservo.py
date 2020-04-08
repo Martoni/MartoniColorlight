@@ -13,7 +13,6 @@ import os
 import sys
 import cocotb
 import logging
-from cocotb import SimLog
 from cocotb.clock import Clock
 from cocotb.triggers import Timer
 from cocotb.result import TestError
@@ -36,7 +35,7 @@ class SimpleServoTest(object):
             raise Exception("Must be using Python 3")
         self._dut = dut
         self._dut._log.setLevel(self.LOGLEVEL)
-        self.log = SimLog("SimpleServo.{}".format(self.__class__.__name__))
+        self.log = dut._log
         self.log.setLevel(self.LOGLEVEL)
         self.reg_init_value = reg_init_value
         self.clock = Clock(self._dut.clk_i, self.PERIOD[0], self.PERIOD[1])
