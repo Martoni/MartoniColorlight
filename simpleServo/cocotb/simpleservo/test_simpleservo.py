@@ -50,9 +50,19 @@ class SimpleServoTest(object):
         self._dut.rst_i <= 0
         yield short_per
 
-@cocotb.test()#skip=True)
+@cocotb.test(skip=True)
 def simple_test(dut):
     cnpt = SimpleServoTest(dut)
+    yield cnpt.reset()
+    cnpt._dut.en_i <= 1
+    cnpt._dut.position_i <= 128
+    yield Timer(1, units="us")
+    yield Timer(43, units="ms")
+
+@cocotb.test()#skip=True)
+def verilator_test(dut):
+    cnpt = SimpleServoTest(dut)
+    cnpt.log.info("Testing verilator simulation")
     yield cnpt.reset()
     cnpt._dut.en_i <= 1
     cnpt._dut.position_i <= 128

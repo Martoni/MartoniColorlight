@@ -1,5 +1,17 @@
 TOPLEVEL_LANG ?= verilog
-SIM=icarus
+
+#SIM=icarus
+SIM=verilator
+ifeq ($(SIM), icarus)
+EXTRA_ARGS += -DICARUS_SIM
+endif
+
+ifeq ($(SIM), verilator)
+EXTRA_ARGS += --coverage
+EXTRA_ARGS += --trace
+COCOTB_HDL_TIMEPRECISION = 10ns
+endif
+
 export COCOTB_REDUCED_LOG_FMT=1
 
 ifneq ($(TOPLEVEL_LANG),verilog)
@@ -34,3 +46,6 @@ mrproper:
 	-rm $(TOPLEVEL).vcd
 	-rm $(TOPLEVEL).v
 	-rm -rf __pycache__
+	-rm -rf sim_build/
+	-rm -rf build
+	-rm dump.vcd

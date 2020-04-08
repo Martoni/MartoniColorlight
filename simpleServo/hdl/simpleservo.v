@@ -33,7 +33,9 @@ begin
             ms_pulse <= 1'b0;
             if(!en_i)
                 mscounter <= 0;
-            else if(mscounter >= `MS/CLK_PER_NS)
+            /* verilator lint_off WIDTH */
+            else if(mscounter >= (`MS/CLK_PER_NS))
+            /* verilator lint_on WIDTH */
             begin
                 mscounter <= 0;
                 ms_pulse <= 1'b1;
@@ -51,7 +53,7 @@ reg [7:0] counter18ms;
 always @(posedge clk_i, posedge rst_i)
 begin
     if(rst_i)
-        counter18ms = 0;
+        counter18ms <= 0;
     else if(state_reg == s_low18ms)
         begin
             if(ms_pulse)
@@ -75,7 +77,9 @@ begin
     else
         if (state_reg == s_pulseon || state_reg == s_pulseoff)
            begin
-               if(pulsecounter >= ((`MS/CLK_PER_NS)/2**N))
+               /* verilator lint_off WIDTH */
+               if(pulsecounter >= ((`MS/CLK_PER_NS)/(2**N)))
+               /* verilator lint_on WIDTH */
                begin
                    pulsecounter <= 0;
                    pulsecount <= pulsecount + 1;
@@ -114,29 +118,29 @@ always @*
 begin
     case(state_reg)
         s_init: if(ms_pulse)
-            state_next <= s_pulse1ms;
+            state_next = s_pulse1ms;
         s_pulse1ms:
             if(!en_i)
-                state_next <= s_init;
+                state_next = s_init;
             else if(ms_pulse)
-                state_next <= s_pulseon;
+                state_next = s_pulseon;
         s_pulseon :
             if(!en_i)
-                state_next <= s_init;
+                state_next = s_init;
             else if(pulsecount >= position_i)
-                state_next <= s_pulseoff;
+                state_next = s_pulseoff;
         s_pulseoff:
             if(!en_i)
-                state_next <= s_init;
+                state_next = s_init;
             else if(ms_pulse)
-                state_next <= s_low18ms;
+                state_next = s_low18ms;
         s_low18ms :
             if(!en_i)
-                state_next <= s_init;
+                state_next = s_init;
             else if(counter18ms >= 20 - 3)
-                state_next <= s_init;
+                state_next = s_init;
         default:
-            state_next <= s_init;
+            state_next = s_init;
     endcase;
 end
 /***********/
@@ -157,7 +161,7 @@ always @(posedge clk_i)
 
 `endif //FORMAL
 
-`ifdef COCOTB_SIM
+`ifdef ICARUS_SIM
 initial begin
   $dumpfile ("SimpleServo.vcd");
   $dumpvars (0, SimpleServo);
