@@ -7,9 +7,8 @@ EXTRA_ARGS += -DICARUS_SIM
 endif
 
 ifeq ($(SIM), verilator)
+COCOTB_HDL_TIMEPRECISION = 1ns
 EXTRA_ARGS += --coverage
-EXTRA_ARGS += --trace
-COCOTB_HDL_TIMEPRECISION = 10ns
 endif
 
 export COCOTB_REDUCED_LOG_FMT=1

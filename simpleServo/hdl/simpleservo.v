@@ -161,11 +161,13 @@ always @(posedge clk_i)
 
 `endif //FORMAL
 
-`ifdef ICARUS_SIM
+`ifdef COCOTB_SIM
 initial begin
   $dumpfile ("SimpleServo.vcd");
   $dumpvars (0, SimpleServo);
+`ifdef ICARUS_SIM
   #1;
+`endif
 end
 `endif
 
