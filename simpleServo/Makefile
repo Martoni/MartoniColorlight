@@ -1,9 +1,9 @@
 TARGET=topServo
 TOP=topServo
 
-OBJS+ = hdl/rst_gen.v\
-	    hdl/simpleservo.v\
-	    hdl/topservo.v
+OBJS += hdl/topservo.v\
+				hdl/rst_gen.v\
+				hdl/simpleservo.v\
 
 TRELLIS=/usr/local/share/trellis
 
