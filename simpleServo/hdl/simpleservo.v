@@ -21,7 +21,7 @@ module SimpleServo #(
 `define MS_COUNTER_SIZE ($clog2(1 + (`MS/CLK_PER_NS)))
 reg [`MS_COUNTER_SIZE-1:0] mscounter;
 reg ms_pulse;
-always @(posedge clk_i, posedge rst_i)
+always @(posedge clk_i or posedge rst_i)
 begin
     if(rst_i)
     begin
@@ -50,7 +50,7 @@ end
 
 /* 18 ms counter */
 reg [7:0] counter18ms;
-always @(posedge clk_i, posedge rst_i)
+always @(posedge clk_i or posedge rst_i)
 begin
     if(rst_i)
         counter18ms <= 0;
@@ -67,7 +67,7 @@ end
 `define PULSE_COUNTER_SIZE ($clog2(1 + ((`MS/CLK_PER_NS)/2**N)))
 reg [`PULSE_COUNTER_SIZE-1:0] pulsecounter;
 reg [N-1: 0] pulsecount;
-always @(posedge clk_i, posedge rst_i)
+always @(posedge clk_i or posedge rst_i)
 begin
     if(rst_i)
     begin
@@ -108,7 +108,7 @@ localparam [2:0] s_init     = 3'h0,
 
 reg [2:0] state_reg, state_next;
 
-always @(posedge clk_i, posedge rst_i)
+always @(posedge clk_i or posedge rst_i)
     if(rst_i)
         state_reg <= s_init;
     else

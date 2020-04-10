@@ -5,10 +5,10 @@ module rst_gen (
 );
 
 /* try to generate a reset */
-reg [2:0]	rst_cpt;
+reg [2:0]	rst_cpt = 3'b000;
 always @(posedge clk_i) begin
 	if (rst_i)
-		rst_cpt = 3'b0;
+		rst_cpt = 3'b000;
 	else begin
 		if (rst_cpt == 3'b100)
 			rst_cpt = rst_cpt;
