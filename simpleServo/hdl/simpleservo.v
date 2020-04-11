@@ -118,27 +118,37 @@ always @*
 begin
     case(state_reg)
         s_init: if(ms_pulse)
-            state_next = s_pulse1ms;
+                    state_next = s_pulse1ms;
+                else
+                    state_next = state_reg;
         s_pulse1ms:
             if(!en_i)
                 state_next = s_init;
             else if(ms_pulse)
                 state_next = s_pulseon;
+            else
+                state_next = state_reg;
         s_pulseon :
             if(!en_i)
                 state_next = s_init;
             else if(pulsecount >= position_i)
                 state_next = s_pulseoff;
+            else
+                state_next = state_reg;
         s_pulseoff:
             if(!en_i)
                 state_next = s_init;
             else if(ms_pulse)
                 state_next = s_low18ms;
+            else
+                state_next = state_reg;
         s_low18ms :
             if(!en_i)
                 state_next = s_init;
             else if(counter18ms >= 20 - 3)
                 state_next = s_init;
+            else
+                state_next = state_reg;
         default:
             state_next = s_init;
     endcase;
