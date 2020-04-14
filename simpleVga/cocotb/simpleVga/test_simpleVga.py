@@ -4,7 +4,7 @@
 # Author:   Fabien Marteau <mail@fabienm.eu>
 # Created:  07/04/2020
 #-----------------------------------------------------------------------------
-""" test_simpleservo
+""" test_simpleVga
 """
 
 import sys
@@ -24,7 +24,7 @@ from cocotb.triggers import FallingEdge
 from cocotb.triggers import ClockCycles
 
 
-class SimpleServoTest(object):
+class SimpleVgaTest(object):
     """
     """
     LOGLEVEL = logging.INFO
@@ -42,27 +42,15 @@ class SimpleServoTest(object):
 
     @cocotb.coroutine
     def reset(self):
-        short_per = Timer(100, units="ns")
-        self._dut.rst_i <= 1
-        yield short_per
-        self._dut.rst_i <= 0
-        yield short_per
-
-@cocotb.test(skip=True)
-def simple_test(dut):
-    cnpt = SimpleServoTest(dut)
-    yield cnpt.reset()
-    cnpt._dut.en_i <= 1
-    cnpt._dut.position_i <= 128
-    yield Timer(1, units="us")
-    yield Timer(43, units="ms")
+        yield RisingEdge(self._dut.clk_i)
+        yield RisingEdge(self._dut.clk_i)
 
 @cocotb.test()#skip=True)
-def verilator_test(dut):
-    cnpt = SimpleServoTest(dut)
-    cnpt.log.info("Testing verilator simulation")
+def simple_test(dut):
+    cnpt = SimpleVgaTest(dut)
+    cnpt.log.info("Begin simple test")
     yield cnpt.reset()
-    cnpt._dut.en_i <= 1
-    cnpt._dut.position_i <= 128
-    yield Timer(1, units="us")
-    yield Timer(43, units="ms")
+    cnpt.log.info("Reset ok")
+    yield Timer(25, units="ms")
+    cnpt.log.info("End of simple test")
+
