@@ -2,9 +2,9 @@ LOCATE COMP "clk_i" SITE "P6";
 IOBUF PORT "clk_i" IO_TYPE=LVCMOS33;
 FREQUENCY PORT "clk_i" 25 MHZ;
 
-# connexions on J2
-LOCATE COMP "hsync_o" SITE "J4"; #1
-LOCATE COMP "vsync_o" SITE "K3"; #2
-LOCATE COMP "red_o" SITE "G1"; #3
-LOCATE COMP "green_o" SITE "K4"; #5
-LOCATE COMP "blue_o" SITE "C2"; #6
+# connexions on J1
+LOCATE COMP "blue_o" SITE "F3"; #1
+LOCATE COMP "red_o" SITE "F1"; #2
+LOCATE COMP "green_o" SITE "G3"; #3
+LOCATE COMP "hsync_o" SITE "G2"; #5
+LOCATE COMP "vsync_o" SITE "H3"; #6
