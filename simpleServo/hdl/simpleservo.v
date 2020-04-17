@@ -44,7 +44,6 @@ begin
             begin
                 mscounter <= mscounter + 1'b1;
             end
-                
         end
 end
 
@@ -93,9 +92,6 @@ begin
             pulsecount <= 0;
         end
 end
-
-
-
 
 /*****************/
 /* State machine */
