@@ -2,4 +2,26 @@ LOCATE COMP "clk_i" SITE "P6";
 IOBUF PORT "clk_i" IO_TYPE=LVCMOS33;
 FREQUENCY PORT "clk_i" 25 MHZ;
 
+#J5 conn
+LOCATE COMP "dclock_o" SITE "M11"; #1
+LOCATE COMP "dlatch_o" SITE "N11"; #2
+LOCATE COMP "sdata_i" SITE "M13"; #XX Button
 
+# J6 Conn
+LOCATE COMP "vdata_o[0]" SITE "K16";
+LOCATE COMP "vdata_o[1]" SITE "J15";
+LOCATE COMP "vdata_o[2]" SITE "J16";
+LOCATE COMP "vdata_o[3]" SITE "J12";
+LOCATE COMP "vdata_o[4]" SITE "H15";
+LOCATE COMP "vdata_o[5]" SITE "G16";
+LOCATE COMP "vdata_o[6]" SITE "F15";
+LOCATE COMP "vdata_o[7]" SITE "L2";
+LOCATE COMP "vdata_o[8]" SITE "K1";
+LOCATE COMP "vdata_o[9]" SITE "J5";
+LOCATE COMP "vdata_o[10]" SITE "K2";
+LOCATE COMP "vdata_o[11]" SITE "B16";
+LOCATE COMP "vdata_o[12]" SITE "J14";
+LOCATE COMP "vdata_o[13]" SITE "F12";
+# J5 Conn
+LOCATE COMP "vdata_o[14]" SITE "K15";
+LOCATE COMP "vdata_o[15]" SITE "N12";

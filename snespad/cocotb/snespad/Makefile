@@ -45,7 +45,6 @@ endif
 mrproper:
 	-rm results.xml
 	-rm $(TOPLEVEL).vcd
-	-rm $(TOPLEVEL).v
 	-rm -rf __pycache__
 	-rm -rf sim_build/
 	-rm -rf build

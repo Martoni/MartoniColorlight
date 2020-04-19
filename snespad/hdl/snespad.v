@@ -10,7 +10,9 @@ module SNesPad #(
 )
 (
     input clk_i,
+`ifdef COCOTB_SIM
     input rst_i,
+`endif
     // snes pad
     output dclock_o,
     output dlatch_o,
@@ -18,6 +20,14 @@ module SNesPad #(
     // data output
     output reg [REG_SIZE-1:0] vdata_o
 );
+
+
+`ifndef COCOTB_SIM
+/* autogenerate reset in synthesis*/
+reg rst_i;
+rst_gen rst_inst (.clk_i(clk_i), .rst_i(1'b0), .rst_o(rst_i));
+`endif
+
 
 `define HMS 500_000
 

@@ -2,7 +2,7 @@ TARGET=snespad
 TOP=snespad
 
 OBJS += ../simpleServo/hdl/rst_gen.v\
-				hdl/snespad.v
+		hdl/snespad.v
 
 TRELLIS=/usr/local/share/trellis
 
