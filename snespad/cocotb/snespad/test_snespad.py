@@ -29,19 +29,22 @@ class SNesPadTest(object):
     """
     """
     LOGLEVEL = logging.INFO
-    PERIOD = (40, "ns")
+    # Real period is 40ns
+    PERIOD = (5, "us")
     SUPER_NES_LEN = 16
     NES_LEN = 8
 
-    def __init__(self, dut, reg_init_value=0xcafe, reg_len=16):
+    def __init__(self, dut, reg_init_value=None, reg_len=16):
         if sys.version_info[0] < 3:
             raise Exception("Must be using Python 3")
+        if reg_init_value is None:
+            raise Exception("Give list of values")
         self._dut = dut
+        self._reglen = reg_len
         self.log = dut._log
         self.log.setLevel(self.LOGLEVEL)
         self.reg_init_value = reg_init_value
-        self._reg = reg_init_value
-        self._reg_count = reg_len
+        self._reg = None
         self._reg_len = reg_len
         self.clock = Clock(self._dut.clk_i, self.PERIOD[0], self.PERIOD[1])
         self._clock_thread = cocotb.fork(self.clock.start())
@@ -60,40 +63,59 @@ class SNesPadTest(object):
 
     @cocotb.coroutine
     def _register(self):
-
+        """ register mecanics """
+        # wait for the end of rst
+        yield FallingEdge(self._dut.rst_i)
+        # will loop
         while True:
-            try:
-                dlatch = int(self._dut.dlatch_o)
-            except ValueError:
-                dlatch = 1
+            dlatch = int(self._dut.dlatch_o)
             if dlatch != 0:
-                yield FallingEdge(self._dut.dlatch_o)
-                self._reg = self.reg_init_value
-                self._reg_count = self._reg_len
-                sdata_bit = (self.reg_init_value & (0x1<<(self._reg_len-1))) >> (self._reg_len - 1)
-                self._dut.sdata_i <= sdata_bit
-            else:
-                sdata_bit = self._reg & (0x1<<(self._reg_len-1))
+                if self.reg_init_value == []:
+                    return
+                self._current = self.reg_init_value.pop()
+                self._reg = self._current
+                self._regcnt = self._reglen
+                self.log.info("Reg {:02X}".format(self._reg))
+                sdata_bit = (self._reg & 0x8000)
+                self.log.info("Latching {:04X}".format(self._reg))
                 self._dut.sdata_i <= (sdata_bit != 0)
-                if self._reg_count != 0:
-                    self._reg = (self._reg << 1)
-                yield RisingEdge(self._dut.dclock_o)
+                self.log.info(f"sdata_bit {sdata_bit} (dlatch)")
+                yield FallingEdge(self._dut.dlatch_o)
+            else:
+                clock_rise = RisingEdge(self._dut.dclock_o)
+                dlatch_rise = RisingEdge(self._dut.dlatch_o)
+
+                trigg = yield [clock_rise, dlatch_rise]
+                if trigg == clock_rise:
+                    self.log.info("--> clock rise ")
+                if trigg == dlatch_rise:
+                    self.log.info("--> latch rise ")
+                if self._regcnt != self._reglen:
+                    self._reg = (self._reg << 1) & 0xFFFF
+                self._regcnt = self._regcnt - 1
+                self.log.info(f"Counter {self._regcnt}")
+                self.log.info("Reg {:02X}".format(self._reg))
+                sdata_bit = self._reg & 0x8000
+                self._dut.sdata_i <= (sdata_bit != 0)
+                self.log.info(f"sdata_bit {self._dut.sdata_i}")
 
 @cocotb.test()#skip=True)
 def simple_test(dut):
-    cnpt = SNesPadTest(dut)
+    values = [0xAAAA, 0x5555, 0x1234, 0xAAAB]
+    cnpt = SNesPadTest(dut, reg_init_value=values.copy())
     yield cnpt.reset()
     cnpt.log.info("Out of reset")
-    yield Timer(500, units="us")
-    cnpt.log.info("half clock")
-    yield Timer(30, units="ms")
-    vread = int(dut.vdata_o)
-    if vread != cnpt.reg_init_value:
-        msg = ("Wrong value read {:04X}, should be {:04X}"
-                .format(vread, cnpt.reg_init_value))
-        cnpt.log.error(msg)
-        raise TestError(msg)
-    cnpt.log.info("Value read {:04X}".format(vread))
-    yield Timer(1, units="us")
+    while values != []:
+        expectValue = values.pop()
+        cnpt.log.info("Info value to read {:04X}".format(expectValue))
+        yield RisingEdge(dut.dlatch_o)
+        vread = int(dut.vdata_o)
+        if vread != expectValue:
+            msg = ("Wrong value read {:04X}, should be {:04X}"
+                    .format(vread, expectValue))
+            cnpt.log.error(msg)
+            raise TestError(msg)
+        cnpt.log.info("Value read {:04X}".format(vread))
+        yield Timer(1, units="us")
 
 

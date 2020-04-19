@@ -1,7 +1,12 @@
-`timescale 1ps/1ps
+`timescale 1ns/1ps
 
 module SNesPad #(
-    parameter CLK_PER_NS = 40
+`ifdef COCOTB_SIM
+    parameter CLK_PER_NS = 5000,
+`else
+    parameter CLK_PER_NS = 40,
+`endif
+    parameter REG_SIZE = 16
 )
 (
     input clk_i,
@@ -11,7 +16,7 @@ module SNesPad #(
     output dlatch_o,
     input sdata_i,
     // data output
-    output reg [15:0] vdata_o
+    output reg [REG_SIZE-1:0] vdata_o
 );
 
 `define HMS 500_000
@@ -50,12 +55,13 @@ end
 /*****************/
 /* State machine */
 /*****************/
-localparam [1:0] s_init   = 2'b00,
-                 s_schigh = 2'b01,
-                 s_sclow  = 2'b10,
-                 s_valid  = 2'b11;
+localparam [2:0] s_init   = 3'b000,
+                 s_latch  = 3'b001,
+                 s_schigh = 3'b010,
+                 s_sclow  = 3'b011,
+                 s_valid  = 3'b100;
 
-reg [1:0] state_reg, state_next;
+reg [2:0] state_reg, state_next;
 
 always @(posedge clk_i or posedge rst_i)
     if(rst_i)
@@ -68,10 +74,10 @@ begin
     case(state_reg)
         s_init:
             if(hms_pulse)
-                state_next = s_schigh;
+                state_next = s_latch;
             else
                 state_next = state_reg;
-        s_schigh:
+        s_latch:
             if(hms_pulse)
                 state_next = s_sclow;
             else
@@ -79,14 +85,23 @@ begin
         s_sclow:
             if(hms_pulse)
             begin
-                if(indexcnt == 16)
+                if(indexcnt == (REG_SIZE - 1))
                     state_next = s_valid;
                 else
                     state_next = s_schigh;
             end else
                 state_next = state_reg;
+        s_schigh:
+            if(hms_pulse)
+                state_next = s_sclow;
+            else
+                state_next = state_reg;
+
         s_valid:
-            state_next = s_init;
+            if(hms_pulse)
+                state_next = s_init;
+            else
+                state_next = state_reg;
         default:
             state_next = s_init;
     endcase;
@@ -100,7 +115,10 @@ begin
         indexcnt <= 0;
     end else begin
         if(hms_pulse) begin
-            if(state_reg == s_schigh) begin
+            if(state_reg == s_latch) begin
+                tmpdata <= {tmpdata[14:0], sdata_i};
+            end
+            else if(state_reg == s_schigh) begin
                 indexcnt <= indexcnt + 1'b1;
                 tmpdata <= {tmpdata[14:0], sdata_i};
             end
@@ -118,7 +136,7 @@ begin
 end
 
 assign dclock_o = (state_reg == s_schigh);
-assign dlatch_o = (state_reg == s_init);
+assign dlatch_o = (state_reg == s_init || state_reg == s_latch);
 
 
 `ifdef COCOTB_SIM
