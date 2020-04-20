@@ -62,6 +62,22 @@ begin
     end
 end
 
+/* external input synchronization */
+reg sdata_tmp, sdata_s;
+always @(posedge clk_i or posedge rst_i)
+begin
+    if(rst_i)
+    begin
+        sdata_tmp <= 1'b0;
+        sdata_s <= 1'b0;
+    end
+    else begin
+        sdata_tmp <= sdata_i;
+        sdata_s <= sdata_tmp;
+    end
+end
+
+
 /*****************/
 /* State machine */
 /*****************/
@@ -126,11 +142,11 @@ begin
     end else begin
         if(hms_pulse) begin
             if(state_reg == s_latch) begin
-                tmpdata <= {tmpdata[14:0], sdata_i};
+                tmpdata <= {tmpdata[14:0], sdata_s};
             end
             else if(state_reg == s_schigh) begin
                 indexcnt <= indexcnt + 1'b1;
-                tmpdata <= {tmpdata[14:0], sdata_i};
+                tmpdata <= {tmpdata[14:0], sdata_s};
             end
             else if(state_reg == s_init)
             begin
