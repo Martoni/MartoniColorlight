@@ -10,7 +10,7 @@ SimpleServo sso (
     .clk_i(clk_i),
     .rst_i(reset),
     .en_i(1'b1),
-    .position_i(8'h80),
+    .position_i(8'hFF),
     .srv_o(srv_o));
 
 
