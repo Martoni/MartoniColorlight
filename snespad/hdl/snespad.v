@@ -1,5 +1,9 @@
 `timescale 1ns/1ps
 
+`ifdef COCOTB_SIM
+    `define RST_EXT
+`endif
+
 module SNesPad #(
 `ifdef COCOTB_SIM
     parameter CLK_PER_NS = 5000,
@@ -7,10 +11,9 @@ module SNesPad #(
     parameter CLK_PER_NS = 40,
 `endif
     parameter REG_SIZE = 16
-)
-(
+)(
     input clk_i,
-`ifdef COCOTB_SIM
+`ifdef RST_EXT
     input rst_i,
 `endif
     // snes pad
@@ -21,8 +24,7 @@ module SNesPad #(
     output reg [REG_SIZE-1:0] vdata_o
 );
 
-
-`ifndef COCOTB_SIM
+`ifndef RST_EXT 
 /* autogenerate reset in synthesis*/
 reg rst_i;
 rst_gen rst_inst (.clk_i(clk_i), .rst_i(1'b0), .rst_o(rst_i));

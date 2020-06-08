@@ -1,0 +1,14 @@
+LOCATE COMP "clk_i" SITE "P6";
+IOBUF PORT "clk_i" IO_TYPE=LVCMOS33;
+FREQUENCY PORT "clk_i" 25 MHZ;
+
+# Green debug led
+#LOCATE COMP "led_o" SITE "P11"; 
+
+#J5 conn
+LOCATE COMP "dclock_o" SITE "M11"; #1
+LOCATE COMP "dlatch_o" SITE "N11"; #2
+LOCATE COMP "sdata_i" SITE "M13"; #XX Button
+
+#J4 conn
+LOCATE COMP "srv_o" SITE "P4";
