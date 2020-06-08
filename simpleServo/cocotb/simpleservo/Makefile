@@ -1,10 +1,10 @@
 TOPLEVEL_LANG ?= verilog
 
-#SIM=icarus
-SIM=verilator
-ifeq ($(SIM), icarus)
-EXTRA_ARGS += -DICARUS_SIM
-endif
+SIM=icarus
+#SIM=verilator
+#ifeq ($(SIM), icarus)
+#EXTRA_ARGS += -DICARUS_SIM
+#endif
 
 ifeq ($(SIM), verilator)
 COCOTB_HDL_TIMEPRECISION = 1ns
