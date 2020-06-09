@@ -24,6 +24,7 @@ reg reset;
 rst_gen rst_inst (.clk_i(clk_i), .rst_i(1'b0), .rst_o(reset));
 
 /* 640 x 480 : X * Y */
+/* 590 x 481 : X * Y */
 reg [9:0] CounterX;
 reg [8:0] CounterY;
 wire CounterXmaxed = (CounterX==767);
@@ -49,9 +50,25 @@ assign hsync_o = ~vga_HS;
 assign vsync_o = ~vga_VS;
 
 /* draw something simple */
-assign red_o = CounterY[3] | (CounterX==256);
-assign green_o = (CounterX[5] ^ CounterX[6]) | (CounterX==256);
-assign blue_o = CounterX[4] | (CounterX==256);
+//assign red_o = CounterY[3] | (CounterX==256);
+//assign green_o = (CounterX[5] ^ CounterX[6]) | (CounterX==256);
+//assign blue_o = CounterX[4] | (CounterX==256);
+
+wire displayRec;
+assign displayRec =  CounterY == 30
+                || CounterY == 509
+                || CounterX == 131
+                || CounterX == 721;
+
+wire simpleBall;
+assign simpleBall = CounterX > 200 && CounterX < 210
+                    && CounterY > 200 && CounterY < 210;
+
+
+/* Draw rectangle */
+assign red_o   = displayRec || simpleBall;
+assign green_o = displayRec;
+assign blue_o  = displayRec || simpleBall;
 
 `ifdef FORMAL
 /***********/
