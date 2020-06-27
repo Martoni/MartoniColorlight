@@ -19,72 +19,30 @@ module SimpleVga #(
     output hsync_o
 );
 
+
 /* autogenerate reset */
 reg reset;
 rst_gen rst_inst (.clk_i(clk_i), .rst_i(1'b0), .rst_o(reset));
 
+wire display_on;
+wire [9:0] hpos;
+wire [8:0] vpos;
+
+/* hvsync */
+HVSync hvs(
+    .clk_i(clk_i),
+    .rst_i(reset),
+    .hsync_o(hsync_o),
+    .vsync_o(vsync_o),
+    .display_on,
+    .hpos(hpos),
+    .vpos(vpos)
+);
+
+assign red_o = display_on;
+assign green_o = 0;
+assign blue_o = 0;
+
 /* 640 x 480 : X * Y */
-/* 590 x 481 : X * Y */
-reg [9:0] CounterX;
-reg [8:0] CounterY;
-wire CounterXmaxed = (CounterX==767);
-
-always @(posedge clk_i)
-if(CounterXmaxed)
-  CounterX <= 0;
-else
-  CounterX <= CounterX + 1;
-
-always @(posedge clk_i)
-if(CounterXmaxed)
-    CounterY <= CounterY + 1;
-
-reg vga_HS, vga_VS;
-always @(posedge clk_i)
-begin
-  vga_HS <= (CounterX[9:4]==0);   // active for 16 clocks
-  vga_VS <= (CounterY==0);   // active for 768 clocks
-end
-
-assign hsync_o = ~vga_HS;
-assign vsync_o = ~vga_VS;
-
-/* draw something simple */
-//assign red_o = CounterY[3] | (CounterX==256);
-//assign green_o = (CounterX[5] ^ CounterX[6]) | (CounterX==256);
-//assign blue_o = CounterX[4] | (CounterX==256);
-
-wire displayRec;
-assign displayRec =  CounterY == 30
-                || CounterY == 509
-                || CounterX == 131
-                || CounterX == 721;
-
-wire simpleBall;
-assign simpleBall = CounterX > 200 && CounterX < 210
-                    && CounterY > 200 && CounterY < 210;
-
-
-/* Draw rectangle */
-assign red_o   = displayRec || simpleBall;
-assign green_o = displayRec;
-assign blue_o  = displayRec || simpleBall;
-
-`ifdef FORMAL
-/***********/
-/* Formal  */
-/***********/
-
-`endif //FORMAL
-
-`ifdef COCOTB_SIM
-initial begin
-  $dumpfile ("SimpleVga.vcd");
-  $dumpvars (0, SimpleVga);
-`ifdef ICARUS_SIM
-  #1;
-`endif
-end
-`endif
 
 endmodule

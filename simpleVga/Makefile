@@ -2,7 +2,8 @@ TARGET=simpleVga
 TOP=SimpleVga
 
 OBJS += ../simpleServo/hdl/rst_gen.v\
-				hdl/simpleVga.v
+			hdl/simpleVga.v\
+			hdl/hvsync.v
 
 TRELLIS=/usr/local/share/trellis
 
