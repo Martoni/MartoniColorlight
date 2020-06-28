@@ -47,6 +47,7 @@ assign hpos = hpos_count;
 assign vpos = vpos_count;
 
 wire hpos_max = (hpos_count == H_MAX);
+wire vpos_max = (vpos_count == V_MAX);
 
 assign display_on = (hpos_count < H_DISPLAY) && (vpos_count < V_DISPLAY);
 
