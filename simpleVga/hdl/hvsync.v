@@ -21,10 +21,7 @@ localparam H_DISPLAY = 640;  // horizontal display width
 localparam H_FRONT = 8;      // front porch
 localparam H_SYNC = 96;      // sync width
 localparam H_BACK = 40;      // back porch
-localparam H_LEFT_BORD = 8;  // Left border
-localparam H_RIGHT_BORD = 8; // Right border
 
-localparam V_FRONT = 2;      // vertical front porch
 localparam V_SYNC = 4;       // sync width
 localparam V_BACK = 25;      // back porch
 localparam V_TOP = 4;        // top border

@@ -6,6 +6,10 @@ module rst_gen (
 
 /* try to generate a reset */
 reg [2:0]	rst_cpt;
+
+initial
+    rst_cpt <= 3'b000;
+
 always @(posedge clk_i) begin
 	if (rst_i)
 		rst_cpt = 3'b0;

@@ -48,10 +48,9 @@ wire square =    ((hpos >= 0) && (hpos <= SQWIDTH))
               || ((vpos >= 0) && (vpos <= SQWIDTH))
 			  || ((vpos <= VWIDTH - 1) && (vpos >= VWIDTH - SQWIDTH - 1));
 
-
-assign red_o = display_on & ((hpos % 3 == 0) | square);
-assign green_o = display_on & ((hpos % 3 == 1) | square);
-assign blue_o = display_on & ((hpos % 3 == 2) | square);
+assign red_o = display_on & ((hpos[4] == 1'b1) | square);
+assign green_o = display_on & ((hpos[5] == 1'b1) | square);
+assign blue_o = display_on & ((hpos[6] == 1'b1) | square);
 
 /* 640 x 480 : X * Y */
 
