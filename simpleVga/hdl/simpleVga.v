@@ -46,7 +46,7 @@ localparam VWIDTH = 480;
 wire square =    ((hpos >= 0) && (hpos <= SQWIDTH))
               || ((hpos <= (HWIDTH - 1)) && (hpos >= (HWIDTH - SQWIDTH - 1)))
               || ((vpos >= 0) && (vpos <= SQWIDTH))
-			  || ((vpos <= VWIDTH - 1) && (vpos >= VWIDTH - SQWIDTH - 1));
+              || ((vpos <= VWIDTH - 1) && (vpos >= VWIDTH - SQWIDTH - 1));
 
 assign red_o = display_on & ((hpos[4] == 1'b1) | square);
 assign green_o = display_on & ((hpos[5] == 1'b1) | square);
