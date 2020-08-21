@@ -26,6 +26,6 @@ begin
     cpt_s <= (rst_s || end_s) ? {WIDTH{1'b0}} : cpt_next_s;
 end
 
-assign led_o = cpt_s[WIDTH-1: WIDTH-8];
+assign led_o = cpt_s[WIDTH-2: WIDTH-9];
 
 endmodule
